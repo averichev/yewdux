@@ -36,7 +36,10 @@ impl Component for IncrementComponent {
     fn view(&self, _ctx: &Context<Self>) -> Html {
         let onclick = self.dispatch.reduce_mut_callback(|s| s.count += 1);
         html! {
+            <>
             <button onclick={onclick}>{"add 1"}</button>
+            <div>{"IncrementComponent store: "}{self.state.count}</div>
+            </>
         }
     }
 }
