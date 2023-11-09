@@ -1,57 +1,36 @@
-use std::rc::Rc;
+mod increment_component;
+mod view_component;
 
+use crate::increment_component::IncrementComponent;
 use yew::prelude::*;
 use yewdux::prelude::*;
+use crate::view_component::ViewComponent;
 
 #[derive(Default, Clone, PartialEq, Eq, Store)]
-struct State {
+pub struct State {
     count: u32,
 }
 
-struct App {
-    /// Our local version of state.
-    state: Rc<State>,
-    dispatch: Dispatch<State>,
-}
+struct AppComponent {}
 
-enum Msg {
-    /// Message to receive new state.
-    State(Rc<State>),
-}
-
-impl Component for App {
-    type Message = Msg;
+impl Component for AppComponent {
+    type Message = ();
     type Properties = ();
 
-    fn create(ctx: &Context<Self>) -> Self {
-        let dispatch = Dispatch::<State>::subscribe(ctx.link().callback(Msg::State));
-        Self {
-            state: dispatch.get(),
-            dispatch,
-        }
-    }
-
-    fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
-        match msg {
-            Msg::State(state) => {
-                self.state = state;
-                true
-            }
-        }
+    fn create(_ctx: &Context<Self>) -> Self {
+        Self {}
     }
 
     fn view(&self, _ctx: &Context<Self>) -> Html {
-        let count = self.state.count;
-        let onclick = self.dispatch.reduce_mut_callback(|s| s.count += 1);
         html! {
             <>
-            <h1>{ count }</h1>
-            <button onclick={onclick}>{"+1"}</button>
+            <ViewComponent />
+            <IncrementComponent />
             </>
         }
     }
 }
 
 pub fn main() {
-    yew::Renderer::<App>::new().render();
+    yew::Renderer::<AppComponent>::new().render();
 }
